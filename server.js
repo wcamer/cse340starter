@@ -12,6 +12,8 @@ const app = express()
 const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
+const detailRoute = require("./routes/detailRoute")
+const intentErrorRoute = require("./routes/intentErrorRoute")
 const utilities = require("./utilities/")
 //
 
@@ -31,7 +33,11 @@ app.use(static)
 //Index route
 app.get("/", utilities.handleErrors(baseController.buildHome))
 //Inventory routes
-app.use("/inv", inventoryRoute)
+app.use("/inv", utilities.handleErrors(inventoryRoute))
+//Detail route
+app.use("/inv", utilities.handleErrors(detailRoute))////
+//intentional error route
+app.use("/er", utilities.handleErrors(intentErrorRoute))
 //File not Found Rout - must be last route in list
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we appear to have lost that page.'})
@@ -45,13 +51,21 @@ app.use(async (req, res, next) => {
 app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav()
   console.error(`Error at: "${req.originalURL}": ${err.message}`)
-  if(err.status == 404){ message = err.message} else {message = 'Oh no! There was a crash.  Maybe try a different route?'}
+  if(err.status == 404){ 
+    message = err.message
+  } else {
+    err.status = 505
+    message = 'Oh no! There was a crash.  Maybe try a different route?'
+  }
+  let errorView = await utilities.errorViewBuilder(err.status, message)
   res.render("errors/error", {
     title: err.status || 'Server Error',
-    message,
-    nav
+    nav,
+    errorView
   })
 })
+
+
 
 
 /* ***********************
