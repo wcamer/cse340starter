@@ -249,6 +249,6 @@ WHERE inv_model = 'Hummer';
 --step 5.6
 UPDATE inventory
 SET 
-	inv_image = REPLACE(inv_image ,'/images/', 'vehicles/'),
-	inv_thumbnail = REPLACE(inv_thumbnail, '/images/','vehicles/');
+	inv_image = REPLACE(inv_image ,'/images/', '/images/vehicles/'),
+	inv_thumbnail = REPLACE(inv_thumbnail, '/images/','/images/vehicles/');
 	

@@ -60,8 +60,8 @@ WHERE inv.classification_id = 2;
 --t1 s5.6 Update all records in inventory table to add "/vehicles" to the middle of the file path of inv_image and inv_thumbnail columns using a single query
 UPDATE inventory
 SET 
-	inv_image = REPLACE(inv_image ,'/images/', 'vehicles/'),
-	inv_thumbnail = REPLACE(inv_thumbnail, '/images/','vehicles/');
+	inv_image = REPLACE(inv_image ,'/images/', '/images/vehicles/'),
+	inv_thumbnail = REPLACE(inv_thumbnail, '/images/','/images/vehicles/');
 	
 --test succesful
 --select * from inventory;
