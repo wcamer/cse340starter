@@ -39,14 +39,14 @@ Util.buildClassificationGrid = async function(data){
         data.forEach(vehicle => {
             grid += '<li>'
             grid += '<a href="../../inv/detail/'+ vehicle.inv_id
-            + '" title=View ' + vehicle.inv_make + ' ' + vehicle.inv_model
-            + ' details"><img src="' + vehicle.inv_thumbnail
-            +'" alt="Image of ' + vehicle.inv_make + ' ' + vehicle.inv_model
+            + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model
+            + 'details"><img src="' + vehicle.inv_thumbnail
+            +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model
             +' on CSE motors" /></a>'
             grid += '<div class="namePrice">'
             grid += '<hr />'
             grid += '<h2>'
-            grid += '<a href="../../inv/detail/' + vehicle.inv_id + ' " title="View '
+            grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View '
             + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">'
             + vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
             grid += '</h2>'
@@ -54,11 +54,6 @@ Util.buildClassificationGrid = async function(data){
             + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
             grid += '</div>'  
             grid += '</li>'
-
-            // remove these lines below
-            // grid += '<h1>' + vehicle.inv_id + ' </h1>'
-            // grid += '<h1>' + vehicle.inv_id + ' </h1>'
-
         })
         grid += '</ul>'
         
