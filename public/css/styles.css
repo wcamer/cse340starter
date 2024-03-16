@@ -23,7 +23,7 @@ body{
    /* background-color: aqua; */
   
   border: 5px solid #f96900;
-  margin: 1% 5%;
+  /* margin: 1% 5%; */
   
   
 
@@ -102,7 +102,7 @@ nav ul li{
 
 
 /* hero  */
-main section:nth-child(1){
+#homePage section:nth-child(1){/*main section:nth-child(1){*/
   /* background-color: brown; */
   grid-column: 1/3;
   display: grid;
@@ -168,14 +168,16 @@ main section:nth-child(1){
 }
 
 /* upgrades */
-main section:nth-child(3){
+#homePage section:nth-child(3){/*main section:nth-child(3){*/
   background-color: #a8dcd1; 
-  display: grid;
-  /* grid-template-columns: 1fr 1fr; */
+  /* display: grid;
+  grid-template-columns: 1fr 1fr; */
 }
 
-main section:nth-child(3) h3{
-  grid-column: 1/3;
+#upgradeHolder{/*#homePage section:nth-child(3){*//*main section:nth-child(3) h3{*/
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* grid-column: 1/3; */
 }
 
 .upgrade{
@@ -212,9 +214,75 @@ footer{
 }
 
 
+/*Inventory classification page (small) */
+#inv-display{
+  /* background-color: pink; */
+  
+  padding: 5%;
+}
+
+#inv-display li{
+  padding: 5%;
+  margin: 5%;
+  list-style-type: none ;
+  /* background-color: lime; */
+  background-color: #a8dcd1;
+  text-align: center;
+  font-weight: bold;
+  
+}
+
+#inv-display li a img{
+ width: 100%;
+ border-radius: 10%;
+ 
+  
+}
+
+.namePrice{
+  /* background-color: yellow; */
+  padding: 1%;
+  border-top: solid 5px black;
+}
+/* end of inventory classification page (small) */
+
+/* Vehicle details page (small) */
+
+#detailImageHolder{
+  
+  /* background-color: pink; */
+  margin:1%;
+  padding: 1%;
+}
+
+#detailImageHolder img{
+  /* width: 50%; */
+  width: 100%;
+  
+  
+}
+
+#detailDetails{
+  background-color: #a8dcd1;
+  padding: 1%;
+  margin: 1%;
+  border: solid 2px black;
+  display: grid;
+}
+
+#detailDetails li {
+  font-size: 1.3em;
+}
+
+/* end of detail page (small) */
 
 
-/*end of small----------------------*/
+/* Error page */
+#errorBody{
+  text-align: center;
+}
+
+/*-------------------------------end of smal view------------------------------------*/
 
 
 /* Start of large */
@@ -225,7 +293,7 @@ footer{
 } */
 
 
-main{
+#homePage{/*main{*/
   display: grid;
   grid-template-columns: 1fr 1fr;
   /* background-color: yellow; */
@@ -262,6 +330,38 @@ nav{
 .reviews ul li{
   padding: 1%;
   margin: 1%;
+}
+
+
+/* Inventory classification page*/
+#inv-display{
+  display: grid;
+}
+
+.Sport{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.Truck, .Sedan, .Custom{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.SUV{
+  display: flex;
+  justify-content: center;
+}
+
+/* End of Inventory classification page */
+
+
+/* Detail page */
+
+#detailPageBody{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  
 }
 
 
