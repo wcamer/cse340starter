@@ -282,6 +282,83 @@ footer{
   text-align: center;
 }
 
+/* flash message box */
+.notice{
+  background-color: pink;
+  padding: 5%;
+  margin: 5%;
+  border: solid 2px black;
+  
+}
+
+.notice li{
+  list-style-type: none;
+}
+
+
+/*Login page */
+#loginForm{
+  background-color: #a8dcd1;
+  padding: 5%;
+  margin: 5%;
+  border: solid 2px black;
+  display: grid;
+ 
+}
+
+#loginForm input{
+  width: 100%;
+}
+
+
+/* Registration view */
+#registerForm{
+  background-color: #a8dcd1;
+  padding: 5%;
+  margin: 5%;
+  border: solid 2px black;
+  display: grid;
+}
+
+#registerForm input{
+  width: 100%;
+}
+
+#registerButton{
+
+ margin: 5%;
+  justify-content: center;
+  
+}
+
+#noAccount{
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+
+/* input validation */
+
+input:required:invalid, input:focus:invalid {
+  /* insert your own styles for invalid form input */
+  color: red;
+  background-image: url(/images/invalid.png);
+ background-position: right top;
+ background-repeat: no-repeat;
+ }
+
+ input:required:valid {
+  /* insert your own styles for valid form input */
+  color: green;
+  background-image: url(/images/valid.png);
+  background-position: right top;
+  background-repeat: no-repeat;
+ }
+
+
+
+/* end of login page */
+
 /*-------------------------------end of smal view------------------------------------*/
 
 
@@ -362,6 +439,18 @@ nav{
   display: grid;
   grid-template-columns: 1fr 1fr;
   
+}
+
+
+/* Login page */
+#loginForm{
+  margin-left: 20%;
+  margin-right: 20%;
+}
+
+#registerForm{
+  margin-left: 20%;
+  margin-right: 20%;
 }
 
 

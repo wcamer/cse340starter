@@ -1,10 +1,12 @@
 /* ******************************************
  * This server.js file is the primary file of the 
  * application. It is used to control the project.
- *******************************************/
+*******************************************/
 /* ***********************
  * Require Statements
  *************************/
+const session = require("express-session")
+const pool = require('./database/')
 const expressLayouts = require("express-ejs-layouts")
 const express = require("express")
 const env = require("dotenv").config()
@@ -14,8 +16,34 @@ const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const detailRoute = require("./routes/detailRoute")
 const intentErrorRoute = require("./routes/intentErrorRoute")
+const accountRoute = require("./routes/accountRoute")
+const bodyParser = require("body-parser")
 const utilities = require("./utilities/")
 //
+
+/* ***********************
+ * Middleware
+ * ************************/
+app.use(session({
+  store: new (require('connect-pg-simple')(session))({
+    createTableIfMissing: true,
+    pool,
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  name: 'sessionId',
+}))
+
+//Express Messages Middleware
+app.use(require('connect-flash')())
+app.use(function(req, res, next){
+  res.locals.messages = require('express-messages')(req,res)
+  next()
+})
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true})) // for parsing application/x-www-form-urlencoded
 
 
 /* ***********************
@@ -38,6 +66,7 @@ app.use("/inv", utilities.handleErrors(inventoryRoute))
 app.use("/inv", utilities.handleErrors(detailRoute))////
 //intentional error route
 app.use("/er", utilities.handleErrors(intentErrorRoute))
+app.use("/account", utilities.handleErrors(accountRoute))
 //File not Found Rout - must be last route in list
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we appear to have lost that page.'})
@@ -64,6 +93,8 @@ app.use(async (err, req, res, next) => {
     errorView
   })
 })
+
+
 
 
 

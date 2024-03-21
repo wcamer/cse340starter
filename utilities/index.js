@@ -112,6 +112,94 @@ Util.errorViewBuilder = function(errorStatus, message){
     return errorView
 }
 
+Util.buildAccountView = function(){
+    // console.log("11111111111111111111111111111111111111111111111111111111111111111!!!!!!")
+    /*create the template here*/
+    let accountView = `
+                        <form id=loginForm>
+                            <fieldset>
+                                <legend>Login Form</legend><br>
+                                <label for="account_email">Email Address</label><br>
+                                <input type="email" id="account_email" name="account_email" required><br><br>
+                                <label for="account_password">Password</label><br>
+                                <input type="password" id="account_password" name="account_password" required><br><br>
+                            </fieldset>
+                                <!-- <input type="button" value="Show Password"><br><br> -->
+                            <div>
+                                <p>Password must contain:</p>
+                                <ul class="passReqList">
+                                    <li>At least 12 characters</li>
+                                    <li>At least 1 captial letter</li>
+                                    <li>At least 1 number</li>
+                                    <li>At least 1 special character</li>
+                                </ul>
+                            </div>
+                            <input type="submit" value="Login" id="loginButton">
+                            
+                        </form>
+                        <h2 id="noAccount">No Account? <a href="./register">Sign-Up</a></2>
+                            
+
+                        
+    `
+    return accountView
+
+}
+
+Util.buildRegisterView = function(){
+    
+    let registerView = `
+                        <form id="registerForm" action="/account/register" method="post">
+                            <fieldset >
+                                <legend>Registration Form</legend>
+                                <label for="account_firstname">First Name:</label><br>
+                                <input type="text" id="account_firstname" name="account_firstname" required><br><br>
+                                <label for="account_lastname">Last Name:</label><br>
+                                <input type="text" id="account_lastname" name="account_lastname" required><br><br>
+                                <label for="account_email">Email Address</label><br>
+                                <input type="email" id="account_email" name="account_email" required><br><br>
+                                <label for="account_password">Password</label><br>
+                                <input type="password" id="account_password" name="account_password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$" required><br><br>
+                                
+                            </fieldset>
+                            
+                            <div>
+                                <p>Password must contain:</p>
+                                <ul class="passReqList">
+                                    <li>At least 12 characters</li>
+                                    <li>At least 1 captial letter</li>
+                                    <li>At least 1 number</li>
+                                    <li>At least 1 special character</li>
+                                </ul>
+                            </div>
+                            
+                            <!--<input type="button" id="passShowHide" value="Show Password"><br><br>-->
+                        
+                            <button type="submit" value="Register" id="registerButton">Register</button>
+                        
+                        
+                        
+
+                        </form>
+    
+    `
+    //// this code below toggles the show/hide password button I just dont' know where to put it
+    // const passShowHideButton = document.querySelector("#passShowHide")
+    // passShowHideButton.addEventListener("click", function() {
+    //     const account_password = document.querySelector("#account_password")
+    //     const type = account_password.getAttribute("type")
+    //     if (type == "password"){
+    //         account_password.setAttribute("type","text")
+    //         passShowHideButton.innerHTML = "Hide Password"
+    //     }
+    //     else{
+    //         account_password.setAttribute("type", "password")
+    //         passShowHideButton.innerHTML = "Show Password"
+    //     }
+    // })
+    return registerView
+    
+}
 
 /* ****************************************
  * Middleware For Handling Errors

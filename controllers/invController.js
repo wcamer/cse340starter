@@ -20,6 +20,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
         nav,
         grid,
         
+        
     })
 }
 
@@ -40,6 +41,7 @@ invCont.buildByInv_Id = async function(req, res, next){
         title: className, //this shows in the meta data and become h1
         nav,
         view,
+        
     })
 
 }
@@ -55,6 +57,7 @@ invCont.imGonnaBreak = async function(req,res,next){
         title: className, //this shows in the meta data and become h1
         nav,
         view,
+        
     })
 }
 
