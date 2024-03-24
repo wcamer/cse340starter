@@ -15,6 +15,7 @@ const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const detailRoute = require("./routes/detailRoute")
+const managementRoute = require("./routes/managementRoute")
 const intentErrorRoute = require("./routes/intentErrorRoute")
 const accountRoute = require("./routes/accountRoute")
 const bodyParser = require("body-parser")
@@ -64,6 +65,8 @@ app.get("/", utilities.handleErrors(baseController.buildHome))
 app.use("/inv", utilities.handleErrors(inventoryRoute))
 //Detail route
 app.use("/inv", utilities.handleErrors(detailRoute))////
+//mangement route
+app.use("/inv", utilities.handleErrors(managementRoute))
 //intentional error route
 app.use("/er", utilities.handleErrors(intentErrorRoute))
 app.use("/account", utilities.handleErrors(accountRoute))

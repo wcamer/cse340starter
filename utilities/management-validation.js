@@ -1,11 +1,152 @@
 //const utilities = require("/utilities/")
 //const ev = require("express-validator")
-const accountModel = require("../models/account-model")
+const inventoryModel = require("../models/inventory-model")
 
 
 const utilities = require(".")
 const { body, validationResult } = require("express-validator")
 const validate = {}
+
+validate.addClassificationRules= () =>{
+
+    return [
+        body("classification_name")
+        .trim()
+        .isAlpha()
+    ]
+
+}
+
+validate.checkNewClassificationName = async (req, res, next) =>{
+    const {classification_name} = req.body
+    let errors =[]
+    errors = validationResult(req)
+    //console.log("$$$$$$$$$req.body\n",req.body,"\nerrors\n",errors)
+    if(!errors.isEmpty()) {
+        let nav = await utilities.getNav()
+        addClassFormView = await utilities.buildAddClassFormView()
+        //req.flash("notice","Classification Name failed")
+        res.render("inventory/add-classification", {
+            title: "Add Classification",
+            nav,
+            errors,
+            classification_name,
+            addClassFormView
+        })
+        return
+    }
+    next()
+
+}
+
+validate.addInventoryRules = () => {
+    return [
+        
+        body("inv_year")
+            .trim()
+            .escape()
+            .isAfter("1885")
+            .toInt()
+            .notEmpty()
+            .isLength({min: 4, max: 4})
+            .withMessage("Please enter a 4 digit year after 1885"),
+
+            body("inv_make")
+            .trim()
+            .escape()
+            .isAlpha()
+            .notEmpty()
+            .withMessage("Please enter in a valid vehicle make"),
+
+            body("inv_model")
+            .trim()
+            .escape()
+            .notEmpty()
+            .withMessage("Please enter in a valid vehicle model"),
+
+            body("inv_description")
+            .trim()
+            .escape()
+            .notEmpty()
+            .withMessage("Please enter a vehicle description"),
+
+            body("inv_image")
+            .trim()
+            .escape()
+            .notEmpty(),
+
+            body("inv_thumbnail")
+            .trim()
+            .escape()
+            .notEmpty(),
+
+            body("inv_price")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isNumeric()
+            .isLength({min: 1, max : 999999999})
+            .withMessage("Please enter a value with no symbols between 1 and 999999999"),
+
+            body("inv_miles")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isInt()
+            .withMessage("Please enter valid miles with no commas with 1 to 9999999"),
+
+            body("inv_color")
+            .trim()
+            .escape()
+            .isAlpha()
+            .notEmpty()
+            .withMessage("Please enter in a valid color"),
+
+            body("classification_id")
+            .trim()
+            .notEmpty()
+            .isInt()
+            .withMessage("Classification Id is casuing an error")
+
+
+    ]
+}
+
+
+validate.checkAddInventory = async (req, res, next) => {
+    const {inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color,classification_id} = req.body
+    let errors = []
+    errors = validationResult(req)
+    if(!errors.isEmpty()){
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",errors)
+        let nav = await utilities.getNav()
+        let dlist = await utilities.buildClassificationList()
+        let  addInventoryView = await utilities.buildAddInventoryView(dlist)
+        res.render("inventory/add-inventory", {
+            title: "Add Inventory",
+            nav,
+            errors,
+            addInventoryView,
+            inv_year,
+            inv_make, 
+            inv_model, 
+            inv_description, 
+            inv_image, 
+            inv_thumbnail, 
+            inv_price, 
+            inv_miles, 
+            inv_color,
+            classification_id,
+            
+        })
+        return
+    }
+    next()
+}
+   
+   
+
+//Below are the validation rules for the account section but are here only for reference
 
 
 /*  **********************************
@@ -38,7 +179,7 @@ validate.registationRules = () =>{
                 .normalizeEmail() // refer to validator.js docs
                 .withMessage("A valid email is required.")
                 .custom(async (account_email) => {
-                    const emailExists = await accountModel.checkExistingEmail(account_email)
+                    const emailExists = await inventoryModel.checkExistingEmail(account_email)
                     if (emailExists) {
                         throw new Error("Email Exists. Please login or use different email")
                     }
@@ -74,7 +215,6 @@ validate.checkRegData = async (req, res, next) => {
         let nav = await utilities.getNav()
         let registerView = await utilities.buildRegisterView()
         //console.log("$$$$$$$$$$$$$$$$$$$",req.body)
-        //req.flash("notice","You have violated the check reg data rules")
         res.render("account/register", {
             
             errors,
@@ -88,7 +228,7 @@ validate.checkRegData = async (req, res, next) => {
         } )
         return
     }
-    //next()
+    next()
 }
 
 /* Rules for the login page */
@@ -109,7 +249,7 @@ validate.loginRules = () =>{
                 .notEmpty()
                 .withMessage("Password isn't right but i will change this message.")
                 .custom(async (account_password, account_email) => {
-                    const correctCreds = await accountModel.checkCorrectCred(account_email,account_password)
+                    const correctCreds = await inventoryModel.checkCorrectCred(account_email,account_password)
                     if(correctCreds){
                         throw new Error("Incorrect Credentials...")
                     }
@@ -144,15 +284,4 @@ validate.checkLoginData = async (req, res, next) => {
 }
 
 
-////this is for management
-// validate.addClassificationRules= () =>{
-
-//     return [
-//         body("classification_name")
-//         .trim()
-//         .isAlpha()
-//     ]
-
-// }
-      
  module.exports = validate

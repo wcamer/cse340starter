@@ -6,7 +6,37 @@
     } %>
 <%- messages() %> 
     
-    
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+     <% if(error.msg != "Invalid value"){ %>
+        <li><%= error.msg %></li>
+  <%  }}) %>
+   </ul>
+  <% } %>   
     
     <!--  Form display -->
-    <%- accountView %>
+    <!-- <[%- accountView %> -->
+    <form id=loginForm action="/account/login" method="post">
+        <fieldset>
+            <legend>Login Form</legend><br>
+            <label for="account_email">Email Address</label><br>
+            <input type="email" id="account_email" name="account_email" value="<%= locals.account_email %>" required><br><br>
+            <label for="account_password">Password</label><br>
+            <input type="password" id="account_password" name="account_password" required><br><br>
+        </fieldset>
+            <!-- <input type="button" value="Show Password"><br><br> -->
+        <div>
+            <p>Password must contain:</p>
+            <ul class="passReqList">
+                <li>At least 12 characters</li>
+                <li>At least 1 captial letter</li>
+                <li>At least 1 number</li>
+                <li>At least 1 special character</li>
+            </ul>
+        </div>
+        <input type="submit" value="Login" id="loginButton">
+        
+    </form>
+    <h2 id="noAccount">No Account? <a href="./register">Sign-Up</a></2>
+        

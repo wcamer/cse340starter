@@ -31,9 +31,10 @@ Util.getNav = async function (req, res, next) {
 * ************************************ */
 Util.buildClassificationGrid = async function(data){
     let grid
+    console.log("--------------------------------",data)
     let classNameData = data[0].classification_name
     let className = classNameData.trim()
-    // console.log("--------------------------------",className)
+    console.log("--------------------------------",className)
     if(data.length > 0){
         grid= '<ul id="inv-display" class="' + className + '" >'
         data.forEach(vehicle => {
@@ -112,15 +113,16 @@ Util.errorViewBuilder = function(errorStatus, message){
     return errorView
 }
 
+//this might be deprecated as of w4
 Util.buildAccountView = function(){
     // console.log("11111111111111111111111111111111111111111111111111111111111111111!!!!!!")
     /*create the template here*/
     let accountView = `
-                        <form id=loginForm>
+                        <form id=loginForm action="/account/login" method="post">
                             <fieldset>
                                 <legend>Login Form</legend><br>
                                 <label for="account_email">Email Address</label><br>
-                                <input type="email" id="account_email" name="account_email" required><br><br>
+                                <input type="email" id="account_email" name="account_email" value="<%= local.account_email %> required><br><br>
                                 <label for="account_password">Password</label><br>
                                 <input type="password" id="account_password" name="account_password" required><br><br>
                             </fieldset>
@@ -137,7 +139,7 @@ Util.buildAccountView = function(){
                             <input type="submit" value="Login" id="loginButton">
                             
                         </form>
-                        <h2 id="noAccount">No Account? <a href="./register">Sign-Up</a></2>
+                        <h2 id="noAccount">No Account? <a href="./register">Sign-Up</a></h2>
                             
 
                         
@@ -145,7 +147,7 @@ Util.buildAccountView = function(){
     return accountView
 
 }
-
+//this function might be deprecated as of week 4
 Util.buildRegisterView = function(){
     
     let registerView = `
@@ -153,11 +155,11 @@ Util.buildRegisterView = function(){
                             <fieldset >
                                 <legend>Registration Form</legend>
                                 <label for="account_firstname">First Name:</label><br>
-                                <input type="text" id="account_firstname" name="account_firstname" required><br><br>
+                                <input type="text" id="account_firstname" name="account_firstname" required value="<%= local.account_firstname %>"><br><br>
                                 <label for="account_lastname">Last Name:</label><br>
-                                <input type="text" id="account_lastname" name="account_lastname" required><br><br>
+                                <input type="text" id="account_lastname" name="account_lastname" value="<%= local.account_lastname %>" required><br><br>
                                 <label for="account_email">Email Address</label><br>
-                                <input type="email" id="account_email" name="account_email" required><br><br>
+                                <input type="email" id="account_email" name="account_email" value="<%= local.account_email %> required><br><br>
                                 <label for="account_password">Password</label><br>
                                 <input type="password" id="account_password" name="account_password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$" required><br><br>
                                 
@@ -200,6 +202,110 @@ Util.buildRegisterView = function(){
     return registerView
     
 }
+
+Util.buildManagmentView= function() {
+    let manView = `
+                <ul id="manViewLinks">
+                    <li>
+                        <a href="./add-classification">Add New Classification</a>
+                    </li>
+                    <li>
+                        <a href="./add-inventory">Add New Vehicle</a>  
+                    </li> 
+                </ul> 
+    `
+    return manView
+}
+
+Util.buildAddClassFormView = function() {
+    // console.log("%%%%%%%%%%%%%%%%%%%",data)
+    let cFView = `
+            <form id="addClassForm" action="/inv/add-classification" method="post">
+            <fieldset >
+                <legend>Add Clasification Form</legend>
+                <label for="classification_name">Classification Name:</label><br>
+                <input type="text" name="classification_name" id="classification_name" pattern="^[a-zA-Z]+$" value="<% = local.classification_name %>" required>
+                <p>Classification name must not contain any special characters or spaces<p>
+                <input type="submit" value="Submit Classification Name">
+
+            </fieldset>
+            </form>
+    
+    `
+    return cFView
+}
+
+Util.buildAddInventoryView =  function(dlist) {
+
+    //let droplist =  Util.buildClassificationList()
+    //console.log("^^^^^^^^^^^^^",dlist)
+    let aIV = `
+                <form id="AddInventoryViewForm" action="/inv/add-inventory" method="post">
+
+                    <fieldset>
+                        <legend>New Vehicle Form</legend>
+                        <p>Classification Name</p>
+                    `
+
+                    aIV+= dlist + `<br><br>
+                        <label for="inv_year">Year</label><br>
+                        <input type="text" name="inv_year" id="inv_year"  pattern="^[0-9]{4}$" required value="<%= local.inv_year %>"><br><br>
+                        <label for="inv_make">Make</label><br>
+                        <input type="text" name="inv_make" id="inv_make" required value="<%= local.inv_make %>" ><br><br>
+                        
+                        <label for="inv_model">Model</label><br>
+                        <input type="text" name="inv_model" id="inv_model" required value="<%= local.inv_model %>" ><br><br>
+                        
+                        <label for="inv_description">Description</label><br>
+                        <textarea name="inv_description" id="inv_description"  rows=10 cols="30" ><%= local.inv_description %>></textarea><br><br>
+                        
+                        <label for="inv_image">Image Path</label><br>
+                        <input type="text" name="inv_image" id="inv_image" required value="/images/vehicles/no-image.png"><br><br>
+                        
+                        <label for="inv_thumbnail">Thumbnail Path</label><br>
+                        <input type="text" name="inv_thumbnail" id="inv_thumbnail" required value="/images/vehicles/no-image-tn.png"><br><br>
+                        
+                        <label for="inv_price">Price</label><br>
+                        <input type="text" name="inv_price" id="inv_price" pattern="^[0-9]{1,9}$" required value="<%= local.inv_price %>" ><br><br>
+                       
+                        <label for="inv_miles">Miles</label><br>
+                        <input type="text" name="inv_miles" id="inv_miles" required pattern="^[0-9]{1,7}$" value="<%= local.inv_miles %>" ><br>
+                       
+                        <label for="inv_color">Color</label><br>
+                        <input type="text" name="inv_color" id="inv_color" required value="<%= local.inv_color %>" ><br><br>
+                       
+                        <button type="submit">Submit New Vehicle</button>
+
+
+                    </fieldset>
+
+
+
+
+                </form>
+    
+    `
+    return aIV
+}
+
+Util.buildClassificationList = async function (classification_id = null) {
+    let data = await invModel.getClassifications()
+    let classificationList =
+      '<select name="classification_id" id="classificationList" required>'
+    classificationList += "<option value=''>Choose a Classification</option>"
+    data.rows.forEach((row) => {
+      classificationList += '<option value="' + row.classification_id + '"'
+      if (
+        classification_id != null &&
+        row.classification_id == classification_id
+      ) {
+        classificationList += " selected "
+      }
+      classificationList += ">" + row.classification_name + "</option>"
+    })
+    classificationList += "</select>"
+    return classificationList
+  }
 
 /* ****************************************
  * Middleware For Handling Errors

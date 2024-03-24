@@ -357,7 +357,11 @@ input:required:invalid, input:focus:invalid {
 
 
 
-/* end of login page */
+/* Management page */
+#manViewLinks{
+  display: grid;
+  padding: 5%;
+}
 
 /*-------------------------------end of smal view------------------------------------*/
 
@@ -413,6 +417,9 @@ nav{
 /* Inventory classification page*/
 #inv-display{
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  /* display: flex;
+  flex-wrap: wrap; */
 }
 
 .Sport{
@@ -453,6 +460,14 @@ nav{
   margin-right: 20%;
 }
 
+
+
+
+/*Managment page */
+
+#manViewLinks{
+  font-size: 1.5rem;
+}
 
 
 
