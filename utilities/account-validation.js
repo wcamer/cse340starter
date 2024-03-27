@@ -69,14 +69,14 @@ validate.checkRegData = async (req, res, next) => {
     const { account_firstname, account_lastname, account_email } = req.body
     let errors = []
     errors = validationResult(req)
-    console.log("######################",errors)
+    
     if (!errors.isEmpty()) {
+        console.log("######################",errors)
         let nav = await utilities.getNav()
         let registerView = await utilities.buildRegisterView()
         //console.log("$$$$$$$$$$$$$$$$$$$",req.body)
         //req.flash("notice","You have violated the check reg data rules")
         res.render("account/register", {
-            
             errors,
             title: "Registration",
             nav,
@@ -88,7 +88,7 @@ validate.checkRegData = async (req, res, next) => {
         } )
         return
     }
-    //next()
+    next()
 }
 
 /* Rules for the login page */
@@ -102,18 +102,18 @@ validate.loginRules = () =>{
                 .notEmpty()
                 .isEmail()
                 .normalizeEmail() // refer to validator.js docs
-                .withMessage("Wrong email bro."),
+                .withMessage("Email rule violation."),
             
                 body("account_password")
                 .trim()
                 .notEmpty()
-                .withMessage("Password isn't right but i will change this message.")
-                .custom(async (account_password, account_email) => {
-                    const correctCreds = await accountModel.checkCorrectCred(account_email,account_password)
-                    if(correctCreds){
-                        throw new Error("Incorrect Credentials...")
-                    }
-                }),
+                .withMessage("Password violation."),
+                // .custom(async (account_password, account_email) => {
+                //     const correctCreds = await accountModel.checkCorrectCred(account_email,account_password)
+                //     if(correctCreds){
+                //         throw new Error("Incorrect Credentials...")
+                //     }
+                // }),
 
             ]
 }
@@ -123,14 +123,16 @@ validate.loginRules = () =>{
 
 /*CHecking the login data and returning errors if any or proceeding */
 validate.checkLoginData = async (req, res, next) => {
-    //const {account_email, account_password} = req.body
+    const {account_email, account_password} = req.body
     let errors = []
     errors = validationResult(req)
-    console.log(errors,"%%%%%%%%%%%%\n",errors.error,"dddddd\n",req.body)
+    
     if(!errors.isEmpty()){
+        console.log(errors,"%%%%%%%%%%%%\n",errors,"dddddd\n",req.body)
         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!")
         let nav = await utilities.getNav()
         let accountView = await utilities.buildAccountView()
+       
         res.render("account/login", {
             errors,
             title: "Login",

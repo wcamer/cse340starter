@@ -17,6 +17,15 @@
     
 
   <%- managementView %>
+  <h2>Manage Inventory</h2>
+  <p>Select a classification to see inventory</p>
+  <%- classificationList %>
+  <table id="inventoryDisplay"></table>
+  <noscript>JavaScript must be enabled to use this page.</noscript>
+
+<!-- create a js file and hook the file to this file to watch for changes -->
+<script src="../js/inventory.js"></script>
+
 
 
 

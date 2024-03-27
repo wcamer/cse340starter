@@ -46,10 +46,11 @@ invCont.buildByInv_Id = async function(req, res, next){
 
 }
 
-
+/*inventory management */
 invCont.buildManagement = async function (req, res) {
     let nav = await utilities.getNav()
     const managementView = await utilities.buildManagmentView() //this needs to be fixed
+    const classificationList = await utilities.buildClassificationList()
     console.log("$$$$$$$$$$$$$$",req.params) // this is {}, if it's just req then its a huge thing
 
     res.render("inventory/management", {
@@ -57,6 +58,7 @@ invCont.buildManagement = async function (req, res) {
         nav,
         errors: null,
         managementView,
+        classificationList,
     })
 
 }
@@ -132,6 +134,7 @@ invCont.registerAddNewInventory = async function(req, res) {
     const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id} = req.body
     let nav = await utilities.getNav()
     let droplist = await utilities.buildClassificationList()
+    
     let addInventoryView = utilities.buildAddInventoryView(droplist)
     let managementView = await utilities.buildManagmentView()
     console.log(req.body)
@@ -146,7 +149,8 @@ invCont.registerAddNewInventory = async function(req, res) {
             title: "Management",
             nav,
             errors: null,
-            managementView
+            managementView,
+            classificationList: droplist
         })
     }else{
         req.flash("notice", "Something went wrong with processing the new inventory")
@@ -166,6 +170,106 @@ invCont.registerAddNewInventory = async function(req, res) {
             inv_miles,
             inv_color,
             classification_id
+        })
+    }
+    
+}
+
+
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+
+invCont.getInventoryJSON = async (req, res, next) => {
+    const classification_id = parseInt(req.params.classification_id)
+    const invData = await invModel.getInventoryByClassificationId(classification_id)
+   if(invData[0].inv_id) {
+    return res.json(invData)
+
+    } else {
+        next(new Error("No data returned"))
+    }
+}
+
+// builds the initial view for inventory edit 
+invCont.buildInventoryEdit = async (req, res, next) =>{
+    const inv_id = parseInt(req.params.inv_id)
+    console.log(inv_id)
+    let nav = await utilities.getNav()
+    let getInvById = await invModel.getInventoryByInv_id(inv_id)
+    // console.log("---------------///////////////////",getInvById)
+    let name = `${getInvById[0].inv_make}  ${getInvById[0].inv_model}`
+    console.log("---------------///////////////////",getInvById[0], name)
+    let droplist = await utilities.buildClassificationList(getInvById[0].classification_id)
+    console.log(droplist, name)
+    // let inventoryEditView = utilities.buildInventoryEdit
+
+    res.render("inventory/edit-inventory",{
+        title: "Edit " + name,
+        nav,
+        errors: null,
+        droplist: droplist,
+        // inventoryEditView,
+        inv_id: getInvById[0].inv_id,
+        inv_make: getInvById[0].inv_make,
+        inv_model: getInvById[0].inv_model,
+        inv_year: getInvById[0].inv_year,
+        inv_description: getInvById[0].inv_description,
+        inv_image: getInvById[0].inv_image,
+        inv_thumbnail: getInvById[0].inv_thumbnail,
+        inv_price: getInvById[0].inv_price,
+        inv_miles: getInvById[0].inv_miles,
+        inv_color: getInvById[0].inv_color,
+        classification_id: getInvById[0].classification_id
+
+
+    })
+}
+
+/* */
+invCont.registerInventoryEdit = async function(req, res) {
+    const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id, inv_id} = req.body
+    let nav = await utilities.getNav()
+    let droplist = await utilities.buildClassificationList()
+    //let addInventoryView = utilities.buildAddInventoryView(droplist)
+    let managementView = await utilities.buildManagmentView()
+    console.log(req.body)
+
+                        //aka .........updateInventory()
+    const updateResult = await invModel.editInventory(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id, inv_id)
+    ////
+    
+    console.log("------------------------------------------",updateResult)
+
+    if(updateResult){
+
+        req.flash("notice", `The vehicle "${inv_make} ${inv_model}" has been edited`)
+        res.status(201).render("inventory/management",{
+            title: "Management",
+            nav,
+            errors: null,
+            managementView,
+            classificationList: droplist,
+        })
+    }else{
+        req.flash("notice", "Something went wrong with processing the edit/insert")
+
+        res.status(501).render("inventory/edit-inventory",{
+            title: "Edit " + inv_make + " " + inv_model,
+            nav,
+            errors: null,
+            //addInventoryView,
+            inv_year,
+            inv_make,
+            inv_model,
+            inv_description,
+            inv_image,
+            inv_thumbnail,
+            inv_price,
+            inv_miles,
+            inv_color,
+            classification_id,
+            droplist,
         })
     }
     

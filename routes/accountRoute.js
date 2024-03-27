@@ -10,6 +10,7 @@ const accountController = require("../controllers/accountController")
 router.get("/login", utilities.handleErrors(accountController.buildLogin));
 
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
+router.get("/account-management", utilities.checkLogin, utilities.handleErrors(accountController.LoggedIn))
 // router.post("/register",
 //     regValidate.registationRules(),
 //     regValidate.checkRegData, 
@@ -24,13 +25,14 @@ router.post("/register",
 
 
 
-router.post("/login",  (req,res) =>{ 
-    console.log("@@@@@@@@@@@@@@@@@@",req.body)
-    validation.loginRules()
-    validation.checkLoginData(req)
-    utilities.handleErrors(accountController.registerLogin)
-    res.status(200).send('login process')
-})
+router.post("/login",  
+    validation.loginRules(),
+    validation.checkLoginData,
+    utilities.handleErrors(accountController.accountLogin)
+    //utilities.handleErrors(accountController.registerLogin)//This part of the route is retired due to function name change in controller as of week 5
+    //Below was removed as per directions of w5
+    // res.status(200).send('login process')
+)
 // router.post("/login", validation.loginRules(), 
 //     validation.checkLoginData,
 //     utilities.handleErrors(accountController.registerLogin),

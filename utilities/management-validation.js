@@ -72,12 +72,12 @@ validate.addInventoryRules = () => {
 
             body("inv_image")
             .trim()
-            .escape()
+            .unescape()
             .notEmpty(),
 
             body("inv_thumbnail")
             .trim()
-            .escape()
+            .unescape()
             .notEmpty(),
 
             body("inv_price")
@@ -112,7 +112,7 @@ validate.addInventoryRules = () => {
     ]
 }
 
-
+/* Checking the submitted added inventory*/
 validate.checkAddInventory = async (req, res, next) => {
     const {inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color,classification_id} = req.body
     let errors = []
@@ -280,6 +280,42 @@ validate.checkLoginData = async (req, res, next) => {
         })
         return
     }
+    next()
+}
+
+/* */
+validate.submitInventoryEdit = async (req, res,next) => {
+    const {inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color,classification_id, inv_id} = req.body
+    let errors = []
+    errors = validationResult(req)
+    if(!errors.isEmpty()){
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",errors)
+        let nav = await utilities.getNav()
+        let droplist = await utilities.buildClassificationList()
+        req.flash("notice","Please correct entries and resubmit")
+        res.render("inventory/edit-inventory", {
+            title: "Edit " + inv_make + " " + inv_model,
+            nav,
+            errors: null,
+            droplist,
+            inv_year,
+            inv_make, 
+            inv_model, 
+            inv_description, 
+            inv_image, 
+            inv_thumbnail, 
+            inv_price, 
+            inv_miles, 
+            inv_color,
+            classification_id,
+            inv_id,
+            
+        })
+        return
+    }else{
+        console.log("*************************** it passed the rules")
+    }
+
     next()
 }
 

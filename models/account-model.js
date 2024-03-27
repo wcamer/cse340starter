@@ -27,14 +27,33 @@ async function checkExistingEmail(account_email){
 
 async function checkCorrectCred(account_email,account_password){
     try{
-        const sql = "SELECT account_firstname, account_lastname FROM account WHERE account_email = $1 and account_password = $2"
+        // const sql = "SELECT account_firstname, account_lastname FROM account WHERE account_email = $1 and account_password = $2"
+        const sql = "SELECT * FROM account WHERE account_email = $1 and account_password = $2"
         const verfied = await pool.query(sql, [account_email],[account_password])
         console.log("!!!!!!!!!!!!!",verfied)
         return verfied.rowCount
     }catch(error){
         return error.message
     }
+
+
 }
 
 
-module.exports = {registerAccount, checkExistingEmail, checkCorrectCred}
+/* *****************************
+* Return account data using email address
+* ***************************** */
+async function getAccountByEmail (account_email) {
+    try{
+        const result = await pool.query(
+            'SELECT account_id, account_firstname, account_lastname, account_email, account_type, account_password FROM account WHERE account_email = $1',
+            [account_email])
+        return result.rows[0]
+        
+    } catch (error) {
+        return new Error ("No matching email found")
+    }
+}
+
+
+module.exports = {registerAccount, checkExistingEmail, checkCorrectCred, getAccountByEmail}
