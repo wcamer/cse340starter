@@ -9,7 +9,7 @@ const invCont = {}
 invCont.buildByClassificationId = async function (req, res, next) {
     const classification_id = req.params.classificationId
     console.log(req.params) // this is an object 
-    
+    const tools = await utilities.loggedIn(res.locals)
     const data = await invModel.getInventoryByClassificationId(classification_id)
     const grid = await utilities.buildClassificationGrid(data)
     let nav = await utilities.getNav()
@@ -19,6 +19,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
         title: className + " vehicles", //+ req.params, //this shows in the meta data
         nav,
         grid,
+        tools,
         
         
     })
@@ -36,11 +37,13 @@ invCont.buildByInv_Id = async function(req, res, next){
     const view = await utilities.detailViewBuilder(resultSet) //needs rows plugged in and return the view
     console.log("??????????????",req.params)
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     const className = resultSet[0].inv_year + " " + resultSet[0].inv_make + " " + resultSet[0].inv_model
     res.render("./inventory/detail", {
         title: className, //this shows in the meta data and become h1
         nav,
         view,
+        tools,
         
     })
 
@@ -49,6 +52,7 @@ invCont.buildByInv_Id = async function(req, res, next){
 /*inventory management */
 invCont.buildManagement = async function (req, res) {
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     const managementView = await utilities.buildManagmentView() //this needs to be fixed
     const classificationList = await utilities.buildClassificationList()
     console.log("$$$$$$$$$$$$$$",req.params) // this is {}, if it's just req then its a huge thing
@@ -59,6 +63,7 @@ invCont.buildManagement = async function (req, res) {
         errors: null,
         managementView,
         classificationList,
+        tools,
     })
 
 }
@@ -66,17 +71,22 @@ invCont.buildManagement = async function (req, res) {
 invCont.buildAddClassForm = async function (req,res){
     console.log("//////////////////////////////////////////")
     let nav = await utilities.getNav()
-    let addClassFormView = await utilities.buildAddClassFormView()
+    const tools = await utilities.loggedIn(res.locals)
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>tools in buildaddclassform here>>>>>>>\n",tools)
+    //let addClassFormView = await utilities.buildAddClassFormView()
+    
     res.render("inventory/add-classification", {
         title: "Add Classification",
         nav,
         errors: null,
-        addClassFormView 
+        //addClassFormView,
+        tools,
     })
 }
 
 invCont.registerAddClassForm = async function (req,res){
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     const {classification_name} = req.body
     //console.log("****************req.body",req.body,"\n\nclass_name",classification_name)
     const addClassFormView = utilities.buildAddClassFormView() /// i have prior to this
@@ -96,7 +106,8 @@ invCont.registerAddClassForm = async function (req,res){
             title: "Add Classification",
             nav:   await utilities.getNav(),
             errors: null,
-            addClassFormView,
+            // addClassFormView,
+            tools,
         })
 
 
@@ -111,31 +122,36 @@ invCont.registerAddClassForm = async function (req,res){
             title: "Add Classification",
             nav,
             errors:null, //this will change
+            tools,
         }
     }
 }
 
 invCont.buildAddInventory = async function(req, res) {
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     let droplist = await utilities.buildClassificationList()
-    console.log(droplist)
-    let addInventoryView = utilities.buildAddInventoryView(droplist)
-    console.log("%%%%%%%%%%%%***********************************************")
+    //console.log(droplist)
+    //let addInventoryView = utilities.buildAddInventoryView(droplist)
+    //console.log("%%%%%%%%%%%%***********************************************")
 
     res.render("inventory/add-inventory",{
         title: "Add Inventory",
         nav,
+        tools,
         errors: null,
-        addInventoryView,
+        droplist
+        //addInventoryView,
     })
 }
 
 invCont.registerAddNewInventory = async function(req, res) {
     const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id} = req.body
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     let droplist = await utilities.buildClassificationList()
     
-    let addInventoryView = utilities.buildAddInventoryView(droplist)
+    //let addInventoryView = utilities.buildAddInventoryView(droplist)
     let managementView = await utilities.buildManagmentView()
     console.log(req.body)
 
@@ -148,6 +164,7 @@ invCont.registerAddNewInventory = async function(req, res) {
         res.status(201).render("inventory/management",{
             title: "Management",
             nav,
+            tools,
             errors: null,
             managementView,
             classificationList: droplist
@@ -158,8 +175,10 @@ invCont.registerAddNewInventory = async function(req, res) {
         res.status(501).render("inventory/add-inventory",{
             title: "Add Inventory",
             nav,
+            tools,
             errors,
-            addInventoryView,
+            droplist,
+            //addInventoryView,
             inv_year,
             inv_make,
             inv_model,
@@ -196,6 +215,7 @@ invCont.buildInventoryEdit = async (req, res, next) =>{
     const inv_id = parseInt(req.params.inv_id)
     console.log(inv_id)
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     let getInvById = await invModel.getInventoryByInv_id(inv_id)
     // console.log("---------------///////////////////",getInvById)
     let name = `${getInvById[0].inv_make}  ${getInvById[0].inv_model}`
@@ -207,6 +227,7 @@ invCont.buildInventoryEdit = async (req, res, next) =>{
     res.render("inventory/edit-inventory",{
         title: "Edit " + name,
         nav,
+        tools,
         errors: null,
         droplist: droplist,
         // inventoryEditView,
@@ -230,6 +251,7 @@ invCont.buildInventoryEdit = async (req, res, next) =>{
 invCont.registerInventoryEdit = async function(req, res) {
     const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id, inv_id} = req.body
     let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
     let droplist = await utilities.buildClassificationList()
     //let addInventoryView = utilities.buildAddInventoryView(droplist)
     let managementView = await utilities.buildManagmentView()
@@ -247,6 +269,7 @@ invCont.registerInventoryEdit = async function(req, res) {
         res.status(201).render("inventory/management",{
             title: "Management",
             nav,
+            tools,
             errors: null,
             managementView,
             classificationList: droplist,
@@ -257,6 +280,7 @@ invCont.registerInventoryEdit = async function(req, res) {
         res.status(501).render("inventory/edit-inventory",{
             title: "Edit " + inv_make + " " + inv_model,
             nav,
+            tools,
             errors: null,
             //addInventoryView,
             inv_year,
@@ -275,6 +299,103 @@ invCont.registerInventoryEdit = async function(req, res) {
     
 }
 
+/* This builds the initial delete-confirm view */
+
+invCont.buildDeleteInv = async  (req,res,next) =>{
+    const inv_id = parseInt(req.params.inv_id)
+    console.log(inv_id)
+    let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
+    let getInvById = await invModel.getInventoryByInv_id(inv_id)
+    // console.log("---------------///////////////////",getInvById)
+    let name = `${getInvById[0].inv_make}  ${getInvById[0].inv_model}`
+    console.log("--/-/-/-/--/-/---/-/-/",getInvById[0], name)
+    //let droplist = await utilities.buildClassificationList(getInvById[0].classification_id)
+    //console.log(droplist, name)
+    // let inventoryEditView = utilities.buildInventoryEdit
+
+    res.render("inventory/delete-confirm",{
+        title: "Delete " + name,
+        nav,
+        tools,
+        errors: null,
+        //droplist: droplist,
+        // inventoryEditView,
+        inv_id: getInvById[0].inv_id,
+        inv_make: getInvById[0].inv_make,
+        inv_model: getInvById[0].inv_model,
+        inv_year: getInvById[0].inv_year,
+        inv_price: getInvById[0].inv_price,
+        
+
+
+    })
+}
+
+/* This registers/processes the deletion*/
+invCont.registerDeleteInv = async function (req, res) {
+    const {inv_id, inv_make, inv_model, inv_price, inv_year} = req.body
+    let nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
+    //console.log(req.params)
+    //const inv_id = parseInt(req.params.inv_id)
+   //console.log('******',inv_id)//,"*-*****************\n",req)
+    //const { inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id, inv_id} = req.body
+  
+    
+    //let addInventoryView = utilities.buildAddInventoryView(droplist)
+    
+  
+
+        
+    //const deletionResult = await invModel.deleteVehicle(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id, inv_id)
+    const deletionResult = await invModel.deleteVehicle(inv_id)
+    
+    // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",deletionResult.rowCount)
+
+    if(deletionResult == 1){
+        let managementView = await utilities.buildManagmentView()
+        let droplist = await utilities.buildClassificationList()
+        req.flash("notice", "The deletion was successful.")
+        res.status(201).render("inventory/management",{
+            title: "Management",
+            nav,
+            tools,
+            errors: null,
+            managementView,
+            classificationList: droplist,
+        })
+    }else{
+        // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        req.flash("notice", "Something went wrong with processing the deletion.  Process aborted.")
+
+        // res.status(501).redirect(`/delete-confirm/${inv_id}`, 501,{
+        //     title: "Delete" + inv_make + " " + inv_model,
+        //     nav,
+        //     errors: null,
+        //     //addInventoryView,
+        //     inv_year: inv_year,
+        //     inv_make: inv_make,
+        //     inv_model: inv_model,
+        //     inv_price: inv_price,
+        //     inv_id: inv_id,
+            
+        // })
+        res.status(501).render(`/delete-confirm/${inv_id}`,{
+            title: "Delete" + inv_make + " " + inv_model,
+            nav,
+            tools,
+            errors: null,
+            //addInventoryView,
+            inv_year: inv_year,
+            inv_make: inv_make,
+            inv_model: inv_model,
+            inv_price: inv_price,
+            inv_id: inv_id,
+            
+        })
+    }
+}
 
 //probably not going to fix and use this
 // invCont.imGonnaBreak = async function(req,res,next){

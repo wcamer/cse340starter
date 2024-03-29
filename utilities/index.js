@@ -204,21 +204,22 @@ Util.buildRegisterView = function(){
     return registerView
     
 }
-
+//This is for employees or admins
 Util.buildManagmentView= function() {
     let manView = `
                 <ul id="manViewLinks">
                     <li>
-                        <a href="./add-classification">Add New Classification</a>
+                        <a href="/inv/add-classification">Add New Classification</a>
                     </li>
                     <li>
-                        <a href="./add-inventory">Add New Vehicle</a>  
+                        <a href="/inv/add-inventory">Add New Vehicle</a>  
                     </li> 
                 </ul> 
     `
     return manView
 }
 
+//Most likely will be deprecated and will erase
 Util.buildAddClassFormView = function() {
     // console.log("%%%%%%%%%%%%%%%%%%%",data)
     let cFView = `
@@ -309,34 +310,33 @@ Util.buildClassificationList = async function (classification_id = null) {
     return classificationList
   }
 
-  Util.buildLoggedInView = async function() {
-   let loggedInview = `<p> Congrats you are logged in!!!</p>`
-    return  loggedInview
+  Util.buildLoggedInView = async function(data) {
+    
+    //console.log("--------------------buldloggedinview---------------\n",data)
+    if(data.accountData.account_type == "Admin"  || data.accountData.account_type == "Employee"){
+        return  `<div>
+                    <h2>Welcome ${data.accountData.account_firstname}</h2>
+                    <h3>Inventory Management</h3>
+                    <a href="/inv"><p> Click here for inventory management</p></a>
+                    <h3>Update Account Information</h3>
+                    <a href="/account/update"><p>Click here to Update Account Information</p></a>
+                    
+                </div>        
+    `
+    }else{
+         return  `
+                <div>
+                    <h2>Welcome ${data.accountData.account_firstname}</h2>
+                    <h3>Update Account Information</h3>
+                    <a href="/account/update"><p>Click here to Update Account Information</p></a>
+
+                </div>        
+            `
+ 
+    }
+      //return  view
   }
 
-/* ****************************************
-* Middleware to check token validity
-**************************************** */
-Util.checkJWTToken = (req,res,next) => {
-    if (req.cookies.jwt) {
-        jwt.verify(
-            req.cookies.jwt,
-            process.env.ACCESS_TOKEN_SECRET,
-            function (err, accountData){
-                if (err) {
-                    req.flash("Please log in")
-                    res.clearCookie("jwt")
-                    return res.redirect("/account/login")
-                }
-                res.locals.accountData = accountData
-                res.locals.loggedin = 1
-                next()
-            }
-        )
-    }else{
-        next()
-    }
-}
 
 /* ****************************************
  * Middleware For Handling Errors
@@ -345,11 +345,71 @@ Util.checkJWTToken = (req,res,next) => {
  **************************************** */
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req,res,next)).catch(next)
 
+
+
+
+/* ****************************************
+* Middleware to check token validity
+**************************************** */
+Util.checkJWTToken = (req,res,next) => {
+    console.log("**************************Comencing the CheckJWTToken************************")
+    if (req.cookies.jwt) {// all 3 components is the cookie value, with 2 components it givess the object with sessionid and jwt token
+        //console.log("**********************/*/*/*/*/*/*/*****\n",req.cookies)
+        jwt.verify(
+            req.cookies.jwt,//token aka account data being signed in
+            process.env.ACCESS_TOKEN_SECRET, //sk
+            function (err, accountData){ // optional call back
+                //the JWT was tampered and will be erased and will direct user to login again to get a new JWT
+                if (err) {
+                    req.flash("Please log in")
+                    res.clearCookie("jwt")
+                    return res.redirect("/account/login")
+                }
+                //console.log("//////////////************************//////////////////\n",accountData)
+                jwt.account_type = accountData.account_type
+                console.log("jwt.account_type == ",jwt.account_type)
+                res.locals.accountData = accountData
+                res.locals.loggedin = 1
+                if(jwt.account_type == "Employee" || jwt.account_type == "Admin"){
+                    console.log("authroized personel account detected....",jwt.account_type)
+                    next()
+                }
+                else{
+                    //req.flash("notice",'This is a client account')
+                    //return res.redirect("/account/login")
+                    next()
+                }
+                
+            }
+        )
+    }
+    else{
+        //There wasn't a valid JWT
+         //next()
+        //req.flash("notice",'JWT was not valid')
+                    //return res.redirect("/account/login")
+                     next()
+    }
+}
+
+Util.authAccount = (req, res, next) =>{
+    console.log("//////////////////////// starting authAccount ////////////////")
+    if(res.locals.accountData.account_type == "Employee" || res.locals.accountData.account_type == "Admin"){
+        console.log("authroized personel account detected....")
+        next()
+    }else{
+        console.log("Access to this view is restricted to personel only...")
+        req.flash("notice","Access to this view is restricted...")
+        res.redirect("/account/login")
+    }
+}
+
 /* ****************************************
  *  Check Login
  * ************************************/
   Util.checkLogin = (req, res, next) => {
     if(res.locals.loggedin){
+        console.log("///////////////////////////////||||||", res.locals)
         next()
     } else{
         req.flash("notice", "Please log in before continuing.")
@@ -357,5 +417,88 @@ Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req,res,next)).
     }
   }
 
+//this is to change the link on the top right of the app to welcome/logout or my account
+Util.loggedIn = async function (data) {
+
+    console.log("--------------------- Util.loggedIn------------------a\n",data)
+    let loggedIn = data.loggedin 
+
+    if(loggedIn == 1){
+        console.log("You are logged in")
+    let tools = `
+            <div id="tools">
+                <span>
+                <a title="Click to go to account management" href="/account/account-management" >Welcome ${data.accountData.account_firstname}</a>
+                <a title="Click here to log out" href="/account/logout">Logout</a>
+                </span>
+            </div>
+    `
+        return await tools
+    }else{
+        console.log("you aren't logged in yet")
+        let tools = `
+        <div id="tools">
+            
+            <a title="Click to go to login" href="/account/login" >My Account</a>
+            
+        </div>
+`
+        return tools
+    }
+
+    // if(res.locals.loggedin){
+    //     console.log("!!!!!!!!!!!!!!!!!!!!!!!!------------------",res.locals.accountData.account_type)
+
+        
+        
+    //     //  //when logged in
+    //     // let welcome = document.createElement('a') // this will be a link to account management
+    //     // welcome.innerHTML = `Welcome ${accountData.account_firstname}`
+    //     // welcome.setAttribute('title','Click to go to Account Management')
+    //     // welcome.setAttribute('href','/account-management')
+
+    //     // let logout = document.createElement('a') // this will trigger a logout
+    //     // logout.setAttribute('title','Click to logout')
+    //     // logout.setAttribute('href','/account-management') ///account/account-management?
+
+    //     // let span = document.createElement('span')
+    //     // span.appendChild(welcome, logout)
+    //     // console.log(span)
+
+    //     // //container for the login/logout
+    //     // let tools = document.querySelector("#tools")
+    //     // //tools.removeChild()
+
+       
+    //     next()
+    // } else{
+    //     console.log("???????????????????????????????????\nno one is logged in")
+    //     //  //when not logged in
+    //     //  let login = document.createElement('a')
+    //     //  login.innerHTML= "My Account"
+    //     //  login.setAttribute('title','Click to login')
+    //     //  login.setAttribute('href','/account/login')
+
+    //     //  //container for the login/logout
+    //     // let tools = document.querySelector("#tools")
+    //     //tools.removeChild()
+
+    //    next()
+    //     // req.flash("notice", "Please log in before continuing.")
+    //     // return res.redirect("/account/login")
+    // }
+}
+
+Util.buildTools = () => {
+    let tools = `
+            <div id="tools">
+                
+                <a title="Click to go to login" href="/account/login" >My Account</a>
+                
+            </div>
+    `
+    return tools
+
+}
 
 module.exports = Util

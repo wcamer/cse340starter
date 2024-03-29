@@ -84,6 +84,7 @@ app.use(async (req, res, next) => {
 *************************/
 app.use(async (err, req, res, next) => {
   let nav = await utilities.getNav()
+  let tools = await utilities.loggedIn(res.locals)
   console.error(`Error at: "${req.originalURL}": ${err.message}`)
   if(err.status == 404){ 
     message = err.message
@@ -95,6 +96,7 @@ app.use(async (err, req, res, next) => {
   res.render("errors/error", {
     title: err.status || 'Server Error',
     nav,
+    tools,
     errorView
   })
 })

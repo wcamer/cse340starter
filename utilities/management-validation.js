@@ -24,14 +24,16 @@ validate.checkNewClassificationName = async (req, res, next) =>{
     //console.log("$$$$$$$$$req.body\n",req.body,"\nerrors\n",errors)
     if(!errors.isEmpty()) {
         let nav = await utilities.getNav()
+        const tools = await utilities.loggedIn(res.locals)
         addClassFormView = await utilities.buildAddClassFormView()
         //req.flash("notice","Classification Name failed")
         res.render("inventory/add-classification", {
             title: "Add Classification",
             nav,
+            tools,
             errors,
             classification_name,
-            addClassFormView
+            //addClassFormView
         })
         return
     }
@@ -121,12 +123,14 @@ validate.checkAddInventory = async (req, res, next) => {
         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",errors)
         let nav = await utilities.getNav()
         let dlist = await utilities.buildClassificationList()
-        let  addInventoryView = await utilities.buildAddInventoryView(dlist)
+        const tools = await utilities.loggedIn(res.locals)
+        //let  addInventoryView = await utilities.buildAddInventoryView(dlist)
         res.render("inventory/add-inventory", {
             title: "Add Inventory",
             nav,
-            errors,
-            addInventoryView,
+            errors:null,
+            droplist: dlist,
+            //addInventoryView,
             inv_year,
             inv_make, 
             inv_model, 
@@ -137,6 +141,7 @@ validate.checkAddInventory = async (req, res, next) => {
             inv_miles, 
             inv_color,
             classification_id,
+            tools,
             
         })
         return
@@ -213,13 +218,15 @@ validate.checkRegData = async (req, res, next) => {
     console.log("######################",errors)
     if (!errors.isEmpty()) {
         let nav = await utilities.getNav()
-        let registerView = await utilities.buildRegisterView()
+        const tools = await utilities.loggedIn(res.locals)
+        //let registerView = await utilities.buildRegisterView()
         //console.log("$$$$$$$$$$$$$$$$$$$",req.body)
         res.render("account/register", {
             
             errors,
             title: "Registration",
             nav,
+            tools,
             //registerView,
             account_firstname,
             account_lastname,
@@ -271,10 +278,12 @@ validate.checkLoginData = async (req, res, next) => {
         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!")
         let nav = await utilities.getNav()
         let accountView = await utilities.buildAccountView()
+        const tools = await utilities.loggedIn(res.locals)
         res.render("account/login", {
             errors,
             title: "Login",
             nav,
+            tools,
             accountView,
             account_email,
         })
@@ -292,10 +301,12 @@ validate.submitInventoryEdit = async (req, res,next) => {
         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",errors)
         let nav = await utilities.getNav()
         let droplist = await utilities.buildClassificationList()
+        const tools = await utilities.loggedIn(res.locals)
         req.flash("notice","Please correct entries and resubmit")
         res.render("inventory/edit-inventory", {
             title: "Edit " + inv_make + " " + inv_model,
             nav,
+            tools,
             errors: null,
             droplist,
             inv_year,

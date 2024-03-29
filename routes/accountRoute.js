@@ -7,10 +7,38 @@ const utilities = require("../utilities")
 const accountController = require("../controllers/accountController")
 
 // router.get("/login", utilities.handleErrors(accountController.buildLogin));
-router.get("/login", utilities.handleErrors(accountController.buildLogin));
+router.get("/login",utilities.handleErrors(accountController.buildLogin));
 
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 router.get("/account-management", utilities.checkLogin, utilities.handleErrors(accountController.LoggedIn))
+//route for the initial view of update account information
+router.get("/update",utilities.handleErrors(accountController.buildAccountUpdate))
+router.get("/logout",utilities.handleErrors(accountController.logout))
+// router.post("/update/accountUpdate", (req, res) =>  {//utilities.handleErrors(accountController.buildRegister))
+
+//     console.log("***************************account routes********************\n",res.locals)
+
+//     // validation.accountInfoUpdateRules(),
+//     // validation.processAccountInfoUpdate,
+// })
+
+
+router.post("/update/accountUpdate",  //utilities.handleErrors(accountController.buildRegister))
+    validation.accountInfoUpdateRules(),
+    validation.processAccountInfoUpdate,
+    utilities.handleErrors(accountController.registerAccountUpdate)
+)
+
+router.post("/update/passwordUpdate",  //utilities.handleErrors(accountController.buildRegister))
+    validation.accountInfoUpdateRules(),
+    validation.processAccountInfoUpdate,
+    utilities.handleErrors(accountController.registerAccountUpdate)
+)
+
+//utilities.handleErrors(accountController.registerAccountUpdate))
+//router.post("/update",utilities.handleErrors(accountController.buildLogin))
+
+
 // router.post("/register",
 //     regValidate.registationRules(),
 //     regValidate.checkRegData, 

@@ -15,7 +15,17 @@
         <li><%= error.msg %></li>
   <% }) %>
    </ul>
-  <% } %>
-    
+<% } %>
 
-  <%- addClassFormView %>
+<!-- <-%-addClassFormView%> -->
+
+<form id="addClassForm" action="/inv/add-classification" method="post">
+    <fieldset >
+        <legend>Add Classification Form</legend>
+        <label for="classification_name">Classification Name:</label><br>
+        <input type="text" name="classification_name" id="classification_name" pattern="^[a-zA-Z]+$" value="<%= locals.classification_name %>" required>
+        <p>Classification name must not contain any special characters or spaces</p>
+        <input type="submit" value="Submit Classification Name">
+
+    </fieldset>
+</form>

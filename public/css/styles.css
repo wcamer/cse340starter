@@ -297,7 +297,7 @@ footer{
 
 
 /*Login page */
-#loginForm{
+#loginForm, #addClassForm, #AddInventoryViewForm, #editInventoryForm, #deleteConfirmForm, #updateForm, #updatePasswordForm{
   background-color: #a8dcd1;
   padding: 5%;
   margin: 5%;
@@ -398,7 +398,17 @@ body{
 }
 
 nav{
-  font-size: 1.5em
+  font-size: 1.5em;
+  
+}
+
+nav ul li a{
+  color: black;
+}
+
+nav ul li a:hover{
+  background-color:#a8dcd1;
+  color:black;
 }
 
 .reviews{

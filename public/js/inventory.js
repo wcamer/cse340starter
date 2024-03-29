@@ -22,7 +22,7 @@ classificationList.addEventListener("change", function () {
 
     })
     .catch(function (error){
-        console.log("thee was a problem: ", error.message)
+        console.log("there was a problem: ", error.message)
     })
 
     // Build inventory items into HTML table components and inject into DOM 
@@ -37,7 +37,7 @@ classificationList.addEventListener("change", function () {
             console.log(element.inv_id + ", " + element.inv_model)
             dataTable += `<tr><td>${element.inv_make} ${element.inv_model}</td>`;
             dataTable += `<td><a href='/inv/edit-inventory/${element.inv_id}' title='Click to update'>Modify</a></td>`;
-            dataTable += `<td><a href='/inv/delete/${element.inv_id}' title='Click to delete'>Delete</a></td>`;
+            dataTable += `<td><a href='/inv/delete-confirm/${element.inv_id}' title='Click to delete'>Delete</a></td>`;
 
         })
 

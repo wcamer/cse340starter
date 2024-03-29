@@ -1,0 +1,53 @@
+<!-- Content Heading -->
+<% if (title) {%>
+    <h1><%= title %></h1>
+    <%} else {
+        res.redirect('/')
+    } %>
+
+
+    
+<%- messages() %> 
+    
+<% if (errors) { %>
+    <ul class="notice">
+   <% errors.array().forEach(error => { %>
+        <li><%= error.msg %></li>
+  <% }) %>
+   </ul>
+  <% } %>
+    
+
+
+  <form id="deleteConfirmForm" action="/inv/delete-confirm" method="post">
+    <fieldset>
+        <legend>Delete Vehicle Confirmation Form</legend>
+        <h2>WARNING: All deletions are permanent and can't be undone</h2>
+        <!-- <p>Classification Name</p> -->
+         <!-- <input type="text" readonly id="classification_id" value="<%= locals.classification_id %>">    -->
+            <!-- <-%- droplist %><br><br> -->
+            <label for="inv_year">Year</label><br>
+            <input type="number" name="inv_year" id="inv_year"  min="1886" max="2025" required value="<%= locals.inv_year %>" readonly><br><br>
+            <label for="inv_make">Make</label><br>
+            <input type="text" name="inv_make" id="inv_make" required value="<%= locals.inv_make %>" readonly><br><br>
+            
+            <label for="inv_model">Model</label><br>
+            <input type="text" name="inv_model" id="inv_model" required value="<%= locals.inv_model %>" readonly><br><br>
+            
+            
+            <label for="inv_price">Price</label><br>
+            <input type="number" name="inv_price" id="inv_price" min="1" max="9999999" required value="<%= locals.inv_price %>" readonly ><br><br>
+            
+            
+            <h2>Ensure that this is the information to be deleted before proceeding.</h2>
+            <button type="submit" >Delete Vehicle</button>
+            <input type="hidden" name = "inv_id" id="inv_id" <% if(locals.inv_id) { %> value ="<%= locals.inv_id %>" <% } %>>
+
+
+    </fieldset>
+
+
+
+
+</form>
+<!-- <script src="/js/inv-update.js"></script> -->
