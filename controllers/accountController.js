@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs")
 const utilities = require("../utilities/")
 const accountModel = require("../models/account-model")
+const cartModel = require("../models/cart-model")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
@@ -252,8 +253,6 @@ async function buildAccountUpdate(req, res){
 /*Processing the account update*/
 async function registerAccountUpdate(req, res) {
     let nav = await utilities.getNav()
-    
-  
     const {account_firstname, account_lastname, account_email, account_id} = req.body
     // res.locals.accountData.account_id = account_id
     // res.locals.accountData.account_firstname = account_firstname
@@ -428,4 +427,58 @@ async function logout(req, res){
 
 }
 
-module.exports = {buildLogin, buildRegister, registerAccount, registerLogin, accountLogin, LoggedIn, buildAccountUpdate, registerAccountUpdate, registerPasswordUpdate, logout}
+//build the cart page
+async function buildCart(req, res){
+    console.log("------------buildcart in accont controller--------------")
+    console.log("res.locals...\n",res.locals.accountData)
+    const nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
+    console.log("before data data...")
+    let data = await cartModel.getCartItems(res.locals.accountData.account_id)
+    console.log("here is data...",data)
+    const cart = await utilities.buildCartView(data)
+    console.log("here is cart",cart)
+    res.render("account/cart",{
+        title: "Cart",
+        nav,
+        tools,
+        errors: null,
+        cart
+    })
+
+}
+async function addToCart(req, res){
+    console.log("------------add to cart in accont controller--------------")
+    console.log("res.locals.cartInfo...\n",res.locals.cartInfo)
+    const nav = await utilities.getNav()
+    const tools = await utilities.loggedIn(res.locals)
+    const ad = res.locals.accountData
+    const ci = res.locals.cartInfo[0] 
+    console.log("here is ci....\n",ci)
+    console.log("before data is added to model...",ci.inv_id,
+    ci.inv_year, 
+    ci.inv_make, 
+    ci.inv_model, 
+    ci.inv_price, 
+    ci.inv_thumbnail, 
+    ad.account_id)
+    let data = await cartModel.addItemToCart(ci.inv_id,
+         ci.inv_year, 
+         ci.inv_make, 
+         ci.inv_model, 
+         ci.inv_price, 
+         ci.inv_thumbnail, 
+         ad.account_id)
+     console.log("here is data...",data)
+    const cart = await utilities.buildCartView(data)
+    console.log("here is cart",cart)
+    res.render("account/cart",{
+        title: "Cart",
+        nav,
+        tools,
+        errors: null,
+        cart
+    })
+}
+
+module.exports = {buildLogin, buildRegister, registerAccount, registerLogin, accountLogin, LoggedIn, buildAccountUpdate, registerAccountUpdate, registerPasswordUpdate, logout, buildCart, addToCart}

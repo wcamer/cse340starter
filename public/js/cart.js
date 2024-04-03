@@ -1,0 +1,1 @@
+//find the button with add to card, send a fetch request to "/cart" with a post method .then call the additemtocart function then disable this button

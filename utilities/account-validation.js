@@ -11,7 +11,7 @@ const validate = {}
 /*  **********************************
   *  Registration Data Validation Rules
   * ********************************* */
-validate.registationRules = () =>{
+validate.registrationRules = () =>{
     return [
                 //firstname is required and must be as string 
                 body("account_firstname")

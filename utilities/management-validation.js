@@ -157,7 +157,7 @@ validate.checkAddInventory = async (req, res, next) => {
 /*  **********************************
   *  Registration Data Validation Rules
   * ********************************* */
-validate.registationRules = () =>{
+validate.registrationRules = () =>{
     return [
                 //firstname is required and must be as string 
                 body("account_firstname")

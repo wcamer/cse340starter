@@ -47,4 +47,10 @@ utilities.handleErrors(invController.registerAddNewInventory)
 router.post("/delete-confirm",
 utilities.handleErrors(invController.registerDeleteInv))
 
+
+// router.post("/type/:classificationId", (req,res)=> {
+//     console.log("the button has been hit.")
+
+// })
+
 module.exports = router;

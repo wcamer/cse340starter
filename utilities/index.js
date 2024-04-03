@@ -56,6 +56,7 @@ Util.buildClassificationGrid = async function(data){
             grid += '<span>$'
             + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
             grid += '</div>'  
+           
             grid += '</li>'
         })
         grid += '</ul>'
@@ -91,12 +92,32 @@ Util.detailViewBuilder = async function(data){
                         <div id="detailDetails">
                             <h2>${make} ${model} Details</h2>
                             <ul>
-                                <li>Price: $${price}</li>
-                                <li>Description: ${description}</li>
-                                <li>Color: ${color}</li>
-                                <li>Miles: ${miles}</li>
+                                <li>
+                                    <p>Price:</p>
+                                    <p id="detailedPrice">$${price}</p>
+                                    
+                                </li>
+                                <li>
+                                    <p>Description:</p>
+                                    <p id="detailDescription">${description}</p>
+                                </li>
+                                <li>
+                                    <p>Color:</p>
+                                    <p id="detailColor">${color}</p></li>
+                                <li>
+                                    <p>Miles:</p>
+                                    <p id="detailMiles">${miles}</p></li>
                             </ul>
+                            <button class="addToCartButton">Add To Cart</button>
                         </div>
+                        
+                        <input id="inv_id" type="hidden" value="${data[0].inv_id}">
+                        <input id="detailYear" type="hidden" value="${year}">
+                        <input id="detailMake" type="hidden" value="${make}">
+                        <input id="detailModel" type="hidden" value="${model}">
+                        <input id="detailPrice" type="hidden" value="${price}">
+                        <input id="detailImage" type="hidden" value="${image}">
+
                     </div>
                     `
 
@@ -312,7 +333,7 @@ Util.buildClassificationList = async function (classification_id = null) {
 
   Util.buildLoggedInView = async function(data) {
     
-    //console.log("--------------------buldloggedinview---------------\n",data)
+    //console.log("--------------------buildloggedinview---------------\n",data)
     if(data.accountData.account_type == "Admin"  || data.accountData.account_type == "Employee"){
         return  `<div>
                     <h2>Welcome ${data.accountData.account_firstname}</h2>
@@ -320,6 +341,8 @@ Util.buildClassificationList = async function (classification_id = null) {
                     <a href="/inv"><p> Click here for inventory management</p></a>
                     <h3>Update Account Information</h3>
                     <a href="/account/update"><p>Click here to Update Account Information</p></a>
+                    <h3>Cart Link</h3>
+                    <a href="/account/cart"><p>Click Here to go to cart</p></a>
                     
                 </div>        
     `
@@ -329,7 +352,8 @@ Util.buildClassificationList = async function (classification_id = null) {
                     <h2>Welcome ${data.accountData.account_firstname}</h2>
                     <h3>Update Account Information</h3>
                     <a href="/account/update"><p>Click here to Update Account Information</p></a>
-
+                    <h3>Cart Link</h3>
+                    <a href="/account/cart"><p>Click Here to go to cart</p></a>
                 </div>        
             `
  
@@ -369,6 +393,7 @@ Util.checkJWTToken = (req,res,next) => {
                 jwt.account_type = accountData.account_type
                 console.log("jwt.account_type == ",jwt.account_type)
                 res.locals.accountData = accountData
+                res.locals.cartInfo = [] //creating a blank cart
                 res.locals.loggedin = 1
                 if(jwt.account_type == "Employee" || jwt.account_type == "Admin"){
                     console.log("authroized personel account detected....",jwt.account_type)
@@ -429,6 +454,7 @@ Util.loggedIn = async function (data) {
             <div id="tools">
                 <span>
                 <a title="Click to go to account management" href="/account/account-management" >Welcome ${data.accountData.account_firstname}</a>
+                <a title="Click to go to cart" href="/account/cart">Cart</a>
                 <a title="Click here to log out" href="/account/logout">Logout</a>
                 </span>
             </div>
@@ -499,6 +525,38 @@ Util.buildTools = () => {
     `
     return tools
 
+}
+
+Util.buildCartView = (data) =>{
+    if(data.length > 0){
+        grid= '<ul id="inv-display"  >'
+        data.forEach(vehicle => {
+            grid += '<li>'
+            grid += '<a href="../../inv/detail/'+ vehicle.inv_id
+            + '" title="View ' + vehicle.inv_make + ' '+ vehicle.inv_model
+            + 'details"><img src="' + vehicle.inv_thumbnail
+            +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model
+            +' on CSE motors" /></a>'
+            grid += '<div class="namePrice">'
+            grid += '<hr />'
+            grid += '<h2>'
+            grid += '<a href="../../inv/detail/' + vehicle.inv_id +'" title="View '
+            + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">'
+            + vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
+            grid += '</h2>'
+            grid += '<span>$'
+            + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+
+            grid += '</div>'  
+            grid += '</li>'
+        })
+        grid += '</ul>'
+        return grid;
+        
+    }else{
+        let emptyCart = "<p>Your cart is empty</p>"
+        return emptyCart
+    }
 }
 
 module.exports = Util

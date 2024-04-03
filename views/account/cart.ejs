@@ -1,0 +1,12 @@
+<!-- Content Heading -->
+<% if (title) {%>
+    <h1><%= title %></h1>
+    <%} else {
+        res.redirect('/')
+    } %>
+    
+    
+    
+    <!-- cart Items display -->
+    <%- cart %> 
+    <!-- <h1>Here is the cart</h1> -->

@@ -14,6 +14,7 @@ router.get("/account-management", utilities.checkLogin, utilities.handleErrors(a
 //route for the initial view of update account information
 router.get("/update",utilities.handleErrors(accountController.buildAccountUpdate))
 router.get("/logout",utilities.handleErrors(accountController.logout))
+router.get("/cart",utilities.handleErrors(accountController.buildCart))
 // router.post("/update/accountUpdate", (req, res) =>  {//utilities.handleErrors(accountController.buildRegister))
 
 //     console.log("***************************account routes********************\n",res.locals)
@@ -40,12 +41,12 @@ router.post("/update/passwordUpdate",  //utilities.handleErrors(accountControlle
 
 
 // router.post("/register",
-//     regValidate.registationRules(),
+//     regValidate.registrationRules(),
 //     regValidate.checkRegData, 
 //     utilities.handleErrors(accountController.registerAccount)
 // )
 router.post("/register",
-    validation.registationRules(),
+    validation.registrationRules(),
     validation.checkRegData, 
     utilities.handleErrors(accountController.registerAccount)
 )
@@ -61,6 +62,7 @@ router.post("/login",
     //Below was removed as per directions of w5
     // res.status(200).send('login process')
 )
+
 // router.post("/login", validation.loginRules(), 
 //     validation.checkLoginData,
 //     utilities.handleErrors(accountController.registerLogin),
