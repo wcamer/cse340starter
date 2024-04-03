@@ -154,6 +154,10 @@ validate.checkAddInventory = async (req, res, next) => {
 //Below are the validation rules for the account section but are here only for reference
 
 
+
+
+
+
 /*  **********************************
   *  Registration Data Validation Rules
   * ********************************* */
